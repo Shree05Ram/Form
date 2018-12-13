@@ -3,41 +3,67 @@ import React,{Component} from 'react';
 import {Form} from 'semantic-ui-react';
 
 export default class Form1 extends Component{
-	
-	
+		
+	state = {
+		email:'',
+		name1:'',
+		pswd:'',
+		cpswd:''
+	};
 
+	change = e => {
+		this.setState({[e.target.name]:e.target.value});
+	};
 
-	constructor(params) {
-		super(params);
-
-
-		this.state = {
-			email:'',
-			name1:'',
-			pswd:'',
-			cpswd:''
+	validate = () => {
+		let isError = false;
+		const errors = {
+			emailError:"",
+			pswdError:"",
 		};
+
+		if (!(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(this.state.email))) {
+			isError = true;
+			
+			errors.emailError="Requires valid email";
+		};
+		
+		if(!(/^[A-za-z ]*$/.test (this.state.name1))){
+			isError = true;
+			errors.emailError="only alphabets";
+		}
+
+		if(this.state.pswd.length<4){
+			isError = true;
+		}
+
+		if(this.state.pswd !==this.state.cpswd){
+			isError = true;
+			errors.emailError="Password missmatch";
+		};
+		this.setState({
+			...this.state,
+			...errors
+		});
+
+		return isError;
 	}
 
-	change = (e, name) => {
-		e.preventDefault();
-
-		const targetName = e.target.name || name;
-
-		let temp = {
-			[targetName]: e.target.value
-		} 
-
-		console.log(e.target.name);
-
-		this.setState(temp);
-	}
 	onSubmit = e => {
 		e.preventDefault();
-		if(this.state.pswd!==this.state.cpswd)
-		alert("Password missmatch");
-   else
-	   console.log("Thanks");
+		const err=this.validate();
+		if(!err){
+			this.setState({
+				email:'',
+				name1:'',
+				pswd:'',
+				cpswd:''
+			});
+		}
+		else {
+			alert("check the input fields "+this.state.name1);
+		
+		};
 	}
 
 	render() {
@@ -45,25 +71,22 @@ export default class Form1 extends Component{
 			<div >
 				<form >
 				<Form.Group size={"large"}>
-					<Form.Input label='Email: '	
+					<Form.Input  label='Email: '	
 								placeholder="abc@efg.hij"
 								name='email'
-								pattern="[a-zA-Z0-9.]+@+[a-zA-Z0-9.]+.[a-zA-Z]{2,30}"
 								className="App-form"  
 								value={this.state.email} 
 								onChange={e=>this.change(e)} 
-								required="required"
-								 />
-								<br/>
+								errorText={this.state.emailError}/>
+								<br/><br/>
 					
 					<Form.Input
 							label='Name:' 
-							pattern="[a-zA-Z]{3,30}"
+							placeholder='Full Name'
+							name='name1'
 							className="App-form"
 							value={this.state.name1} 
-							onChange={e=>this.change(e, 'name1')}
-							required="required"
-							/>
+							onChange={e=>this.change(e)}/>
 					<br/><br/>
 					
         			<Form.Input label='Password: '
@@ -72,7 +95,6 @@ export default class Form1 extends Component{
 								value={this.state.pswd}
 								type="password"
 								onChange={e=>this.change(e)}
-								required="required"
 					/>
 					<br/><br/>
         			<Form.Input label='Confirm Password: '
@@ -81,7 +103,6 @@ export default class Form1 extends Component{
 										className="App-form"
 										value={this.state.cpswd} 
 										onChange={e=>this.change(e)}
-										required="required"
 									 />
 					<br/><br/>
 					
