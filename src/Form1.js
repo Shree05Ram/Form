@@ -17,6 +17,7 @@ export default class Form1 extends Component{
 
 	validate = () => {
 		let isError = false;
+		let a=0;
 		const errors = {
 			emailError:"",
 			pswdError:"",
@@ -24,45 +25,56 @@ export default class Form1 extends Component{
 
 		if (!(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(this.state.email))) {
 			isError = true;
-			
-			errors.emailError="Requires valid email";
+			a=1;
 		};
 		
 		if(!(/^[A-za-z ]*$/.test (this.state.name1))){
 			isError = true;
-			errors.emailError="only alphabets";
+			a=2;
 		}
 
 		if(this.state.pswd.length<4){
 			isError = true;
+			a=3;
 		}
 
 		if(this.state.pswd !==this.state.cpswd){
 			isError = true;
 			errors.emailError="Password missmatch";
+			a=4;
 		};
 		this.setState({
 			...this.state,
 			...errors
 		});
 
-		return isError;
+		return a;
 	}
 
 	onSubmit = e => {
 		e.preventDefault();
 		const err=this.validate();
-		if(!err){
+		if(err){
+			switch(err){
+				case 1:alert("Invalid Email");
+						break;
+				case 2:alert("Name should contain only alphabets");
+						break;
+				case 3:alert("Password should have minimum 4 characters ");
+						break;
+				case 4:alert("Password mismatch ");
+						break;
+				default:alert("Unknown error");
+			}
+			
+		}
+		else {
 			this.setState({
 				email:'',
 				name1:'',
 				pswd:'',
 				cpswd:''
 			});
-		}
-		else {
-			alert("check the input fields "+this.state.name1);
-		
 		};
 	}
 

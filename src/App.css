@@ -1,0 +1,28 @@
+.App {
+  text-align:center;
+}
+
+.App-logo {
+  text-align:left;
+  height: 20vmin;
+  width: 40vmin;
+  background-color: #000000;
+}
+
+.App-header {
+  color:#000000;
+  min-height: 100vh;
+  display: fluid;
+  flex-direction: column;
+  
+  
+  font-size: calc(10px + 2vmin);
+  color:"Black";
+}
+
+.App-form {
+  color:"white";
+  input[type="text"] {
+    size:"350";
+}
+}
