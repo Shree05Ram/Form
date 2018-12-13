@@ -1,133 +1,120 @@
 import React,{Component} from 'react';
 
-import {Form} from 'semantic-ui-react';
+import {Form, Grid, Segment, Message} from 'semantic-ui-react';
 
 export default class Form1 extends Component{
 		
 	state = {
 		email:'',
-		name1:'',
-		pswd:'',
-		cpswd:''
+		userName:'',
+		password:'',
+		confirmPassword:'',
+		errorMessage: '',
+		errorInEmail: false
 	};
 
 	change = e => {
 		this.setState({[e.target.name]:e.target.value});
 	};
 
+	clearErrorMessage = () => {
+		setTimeout(() => {
+			this.setState({
+				errorMessage: ""
+			});
+		}, 5000);
+	}
+
 	validate = () => {
-		let isError = false;
-		let a=0;
-		const errors = {
-			emailError:"",
-			pswdError:"",
-		};
-
 		if (!(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(this.state.email))) {
-			isError = true;
-			a=1;
-		};
-		
-		if(!(/^[A-za-z ]*$/.test (this.state.name1))){
-			isError = true;
-			a=2;
+			this.setState({
+				errorInEmail: true,
+				errorMessage: "Invalid Email"
+			}, () => {
+				this.clearErrorMessage();
+			});
+		} else if (!(/^[A-za-z ]*$/.test(this.state.userName))) {
+			this.setState({
+				errorMessage: "Name should contain only alphabets"
+			}, () => {
+				this.clearErrorMessage();
+			});
+		} else if (this.state.password.length < 4) {
+			this.setState({
+				errorMessage: "Password should have minimum 4 characters"
+			}, () => {
+				this.clearErrorMessage();
+			});
+		} else if (this.state.password !== this.state.confirmPassword) {
+			this.setState({
+				errorMessage: "Password mismatch"
+			}, () => {
+				this.clearErrorMessage();
+			});
+		} else {
+			this.setState({
+				errorMessage: "Unknown error"
+			}, () => {
+				this.clearErrorMessage();
+			});
 		}
-
-		if(this.state.pswd.length<4){
-			isError = true;
-			a=3;
-		}
-
-		if(this.state.pswd !==this.state.cpswd){
-			isError = true;
-			errors.emailError="Password missmatch";
-			a=4;
-		};
-		this.setState({
-			...this.state,
-			...errors
-		});
-
-		return a;
 	}
 
 	onSubmit = e => {
 		e.preventDefault();
-		const err=this.validate();
-		if(err){
-			switch(err){
-				case 1:alert("Invalid Email");
-						break;
-				case 2:alert("Name should contain only alphabets");
-						break;
-				case 3:alert("Password should have minimum 4 characters ");
-						break;
-				case 4:alert("Password mismatch ");
-						break;
-				default:alert("Unknown error");
-			}
-			
-		}
-		else {
-			this.setState({
-				email:'',
-				name1:'',
-				pswd:'',
-				cpswd:''
-			});
-		};
+		this.validate();
 	}
 
 	render() {
    		return (
-			<div >
-				<form >
-				<Form.Group size={"large"}>
-					<Form.Input  label='Email: '	
-								placeholder="abc@efg.hij"
+			<Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle'>
+				<Grid.Column style={{ maxWidth: 450 }}>
+					<Form size='large' error>
+						<Segment stacked>
+							<Form.Input
+								label='Email'
 								name='email'
-								className="App-form"  
 								value={this.state.email} 
 								onChange={e=>this.change(e)} 
-								errorText={this.state.emailError}/>
-								<br/><br/>
-					
-					<Form.Input
-							label='Name:' 
-							placeholder='Full Name'
-							name='name1'
-							className="App-form"
-							value={this.state.name1} 
-							onChange={e=>this.change(e)}/>
-					<br/><br/>
-					
-        			<Form.Input label='Password: '
-								name='pswd'
-								className="App-form"
-								value={this.state.pswd}
+								error={this.state.errorInEmail}
+							/>
+							<Form.Input
+								label='Name'
+								name='userName'
+								value={this.state.userName} 
+								onChange={e=>this.change(e)}
+							/>
+							<Form.Input 
+								label='Password'
+								name='password'
+								value={this.state.password}
 								type="password"
 								onChange={e=>this.change(e)}
-					/>
-					<br/><br/>
-        			<Form.Input label='Confirm Password: '
-										name='cpswd'
-										type="password"
-										className="App-form"
-										value={this.state.cpswd} 
-										onChange={e=>this.change(e)}
-									 />
-					<br/><br/>
-					
-					<Form.Button type="submit"
-						disabled={! this.state.email
-							|| !this.state.name1
-							|| !this.state.pswd
-							|| !this.state.cpswd
-						}
-						onClick={this.onSubmit}>Sign up</Form.Button>
-					</Form.Group>
-				 </form>
-			</div>
+							/>
+							<Form.Input 
+								label='Confirm Password'
+								name='confirmPassword'
+								type="password"
+								value={this.state.confirmPassword} 
+								onChange={e=>this.change(e)}
+							/>
+							<Form.Button type="submit"
+								disabled={!this.state.email || !this.state.userName || !this.state.password || !this.state.confirmPassword}
+								onClick={this.onSubmit}
+							>
+								Sign up
+							</Form.Button>
+							{ this.state.errorMessage &&
+								<Message
+									error
+									header='Error'
+									content={this.state.errorMessage}
+								/>
+							}
+						</Segment>
+					</Form>
+				</Grid.Column>
+			</Grid>
     	);
 	}
 } 
